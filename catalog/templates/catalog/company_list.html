@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Лист компании</h1>
+
+    {% if company_list %}
+    <ul>
+
+      {% for company in company_list %}
+      <li>
+        <a href="{{ company.get_absolute_url }}">{{ company.title }}</a> ({{company.owner}})
+      </li>
+      {% endfor %}
+
+    </ul>
+
+    {% else %}
+      <p>В библиотеке нет компаний</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Наименование: {{ company.title }}</h1>
+
+<p><strong>Вледелец:</strong> <a href="{% url 'owner-detail' company.owner.pk %}">{{ company.owner }}</a></p>
+<p><strong>Резюме:</strong> {{ company.summary }}</p>
+<p><strong>Численность:</strong> {{ company.numbers }}</p>
+<p><strong>ID:</strong> {{ company.isbn }}</p>
+<p><strong>Рынок:</strong> {{ company.language }}</p>
+<p><strong>Описание:</strong> {{ company.genre.all|join:", " }}</p>
+<p><strong>Местоположение:</strong></p>
+
+{% block maps %}{% endblock %}
+
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>Копии</h4>
+
+{% for copy in company.companyinstance_set.all %}
+<hr>
+<p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
+{% if copy.status != 'a' %}<p><strong>Должен быть расторгнут:</strong> {{copy.due_back}}</p>{% endif %}
+<p><strong>Выходные данные:</strong> {{copy.imprint}}</p>
+<p class="text-muted"><strong>ID:</strong> {{copy.id}}</p>
+
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Владелец: {{ owner }} </h1>
+<p>{{owner.date_of_birth}} - {% if owner.date_of_death %}{{owner.date_of_death}}{% endif %}</p>
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>Компании</h4>
+
+<dl>
+{% for company in owner.company_set.all %}
+  <dt><a href="{% url 'company-detail' company.pk %}">{{company}}</a> ({{company.companyinstance_set.all.count}})</dt>
+  <dd>{{company.summary}}</dd>
+  <dd>{{company.numbers}}</dd>
+{% endfor %}
+</dl>
+
+</div>
+{% endblock %}

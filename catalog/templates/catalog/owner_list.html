@@ -1,0 +1,24 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Лист владельцев</h1>
+
+{% if owner_list %}
+  <ul>
+
+  {% for owner in owner_list %}
+    <li>
+      <a href="{{ owner.get_absolute_url }}">
+      {{ owner }} ({{owner.date_of_birth}} - {% if owner.date_of_death %}{{owner.date_of_death}}{% endif %})
+      </a>
+    </li>
+  {% endfor %}
+
+ </ul>
+{% else %}
+  <p>Нет доступных владельцев</p>
+{% endif %}
+
+
+{% endblock %}

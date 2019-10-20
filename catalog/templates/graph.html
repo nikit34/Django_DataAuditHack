@@ -1,0 +1,58 @@
+{% extends "base_generic.html" %}
+
+    {% block graph %}
+        <div class="row">
+            <div id="employees" style="width:1500px; height:600px;"></div>
+        </div>
+        <div class="row">
+            <div class="container">
+        <p class="text-right">Сгенерированно автоматически</p>
+                <a class="btn btn btn-secondary" href="{% url 'index' %}">
+                  <i class="fas fa-cloud-download-alt mr-1"></i> Венуться
+                </a>
+            </div>
+        </div>
+
+
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var endpoint = '/catalog/graph/'
+                var articleData = articleLabels = []
+                $.ajax({
+                    method: "GET",
+                    url: endpoint,
+                    success: function(data){
+                        articleLabels = data.article_labels
+                        articleData = data.article_data
+                        articleChart()
+                    },
+                    error: function(error_data){
+                        console.log("error")
+                    }
+                })
+                function articleChart(){
+                    var data = [{
+                        x: articleData,
+                        y: articleLabels,
+                        type: 'bar',
+                        orientation: 'v',
+                        marker: {
+                            color: "#23b7e5",
+                        },
+                    }];
+                    var layout = {
+                        title: "Number of employees per company",
+                    };
+
+
+                Plotly.newPlot('employees', data, layout);
+
+                }
+            })
+        </script>
+
+
+    {% endblock %}
