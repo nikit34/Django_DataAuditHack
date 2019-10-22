@@ -1,0 +1,48 @@
+{% extends "base_generic.html" %}
+
+
+{% block content %}
+<div class="jumbotron">
+<h6 class="display-4">Реестр Счетной палаты</h6>
+
+<p class="lead">Сервис <em>Счетной палаты</em> направлен на решение задачи определения ключевых показателей производительности труда. Наше П.О. поддерживает три уровня прав доступа к данным, что делает возможным просмотр только заранее определенных данных, с наглядной визуализацией. Дает возможность компаниям заполнять данные о себе с автоматической проверкой корректности. Включает расширенные и гибкие панели админстратирования. Архитектура веб-сервиса заложена с возможностью интергации с предыдущими сервисами. Возможный заказчик: <a href="http://audit.gov.ru/"></a></p>
+<hr class="my-4">
+<a class="btn btn-outline-info" onclick="toggle_visibility('hide_info');"role="button">Узнать больше</a>
+
+<div id="hide_info"  style="display: none;" >
+<h2 >Разработан на Django</h2>
+<p>Взаимодействует с Яндекс Карты API и open source framework для визуализации Dash </p>
+
+<div>
+  {% load static %}
+<img src="{% static 'images/gerb.png' %}" alt="My image" style="width:555px;height:540px;"/>
+</div>
+
+</div>
+</div>
+
+<script type="text/javascript">
+      function toggle_visibility(id) {
+         var e = document.getElementById(id);
+         if(e.style.display != 'none')
+            e.style.display = 'none';
+         else
+            e.style.display = 'block';
+      }
+  </script>
+
+
+<h2>Динамический контент</h2>
+
+<p>Регистр имеет следующую статистику записей</p>
+<ul>
+<li><strong>Компании:</strong> {{ num_companys }}</li>
+<li><strong>Копии:</strong> {{ num_instances }}</li>
+<li><strong>Копии доступны:</strong> {{ num_instances_available }}</li>
+<li><strong>Владельцы:</strong> {{ num_owners }}</li>
+</ul>
+
+
+Вы посетили эту страницу {{ num_visits }} раз.
+
+{% endblock %}

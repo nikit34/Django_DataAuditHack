@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  {% block title %}<title>Регистрация</title>{% endblock %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=ef9153f2-4372-4f93-870d-d13e8ae725c7" type="text/javascript"></script>
+
+  {% load static %}
+
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body style="background-color:rgb(255, 255, 255);">
+
+
+
+  <nav class="js-navbar-scroll navbar fixed-top navbar-expand-lg navbar-transparent navbar-dark navbar-bg-onscroll--fade">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'index' %}">
+        <img src="{% static 'images/gerb.png' %}" alt="Gov" style="width: 30px;">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo" aria-controls="navbarTogglerDemo" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo">
+        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+          <li class="nav-item mr-4 mb-2 mb-lg-0">
+            <a href="http://audit.gov.ru/" style="color: black;" class="nav-link">
+              <i class="fas fa-cubes u-font-size-90 mr-1"></i>Счетная палата
+            </a>
+          </li>
+          <li class="nav-item mr-4 mb-2 mb-lg-0">
+            <a class="nav-link" href="#" style="color: black;">
+              <i class="fas fa-cube u-font-size-90 mr-1"></i> О нас
+            </a>
+          </li>
+          <li class="nav-item mr-4 mb-2 mb-lg-0">
+            <a class="nav-link" href="#" style="color: black;">
+              <i class="fas fa-book u-font-size-90 mr-1"></i> Документы
+            </a>
+          </li>
+        </ul>
+        <div>
+          <a class="btn btn-outline-dark" href="#">
+            <i class="fas fa-cloud-download-alt mr-1"></i> Загрузить
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <br><br><br><br>
+
+
+<main class="row container-fluid">
+<div class="container">
+<div class="row">
+  <div class="col-sm-2">
+  {% block sidebar %}
+  <ul class="nav flex-column" style="background-color:#d8ddee; border-top-right-radius: 2%; border-top-left-radius: 2%;">
+    <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Главная</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'companys' %}">Все компании</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'owners' %}">Все владельцы</a></li>
+  </ul>
+<br>
+  <ul class="nav flex-column" style="background-color:#d8ddee; border-bottom-right-radius: 2%; border-bottom-left-radius: 2%;">
+   {% if user.is_authenticated %}
+     <li  class="nav-item" style="background-color:#ffffff;"><hr>&nbsp; Пользователь: <strong> &nbsp; &nbsp;  {{ user.get_username }}</strong> <hr></li>
+
+     <li  class="nav-item"><a class="nav-link" href="{% url 'my-borrowed' %}">Мои зависмости</a></li>
+     <li  class="nav-item"><a class="nav-link" href="{% url 'logout'%}?next={{request.path}}">Выйти</a></li>
+   {% else %}
+     <li  class="nav-item"><a class="nav-link" href="{% url 'login' %}?next={{request.path}}">Войти</a></li>
+   {% endif %}
+  </ul>
+  <br>
+  <a class="btn btn btn-secondary" href="{% url 'graph' %}">
+      <i class="fas fa-cloud-download-alt mr-1"></i> Графики
+    </a>
+
+   {% if user.is_staff %}
+   <hr />
+   <ul class="nav flex-column">
+   <li  class="nav-item">Штат</li>
+   {% if perms.catalog.can_mark_returned %}
+   <li  class="nav-item"><a class="nav-link" href="{% url 'all-borrowed' %}">Все зависмости</a></li>
+   {% endif %}
+   </ul>
+    {% endif %}
+
+{% endblock %}
+  </div>
+  <div class="col-sm-10">
+    <div class="container">
+
+  {% block graph %}{% endblock %}
+  {% block content %}{% endblock %}
+
+  {% block pagination %}
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">пред.</a>
+                {% endif %}
+                <span class="page-current">
+                    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">след.</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+  {% endblock %}
+
+</div>
+  </div>
+</div>
+
+</div>
+</main>
+
+
+
+
+
+
+
+
+
+
+
+
+<br><br><br><br><br><br><br><br><br>
+<footer class="u-content-space-top pb-4"  style="background-color: #a75a6b;" role="footer">
+  <div class="container-fluid">
+    <div class="px-md-3">
+      <!-- Social Sharing -->
+      <div class="text-center">
+        <br>
+      <h2 class="h5 font-weight-light text-white mb-2">Создано для хакатона DataAudit - 2019</h2>
+
+        <div class="d-flex justify-content-center">
+          <!-- Facebook Share -->
+          <div class="mr-3 mb-2 mb-md-0">
+            <div class="fb-share-button demo-faceook-share fb_iframe_widget" data-href="http://facebook.com/htmlstream" data-layout="button" data-size="large" data-mobile-iframe="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=1972702999621713&amp;container_width=43&amp;href=http%3A%2F%2Ffacebook.com%2Fhtmlstream&amp;layout=button&amp;locale=en_US&amp;mobile_iframe=true&amp;sdk=joey&amp;size=large"><span style="vertical-align: bottom; width: 73px; height: 28px;"><iframe name="f38208615b6080c" width="1000px" height="1000px" title="fb:share_button Facebook Social Plugin" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" src="https://www.facebook.com/v2.3/plugins/share_button.php?app_id=1972702999621713&amp;channel=https%3A%2F%2Fstaticxx.facebook.com%2Fconnect%2Fxd_arbiter.php%3Fversion%3D44%23cb%3Dfd3eb25db0b678%26domain%3Dhtmlstream.com%26origin%3Dhttps%253A%252F%252Fhtmlstream.com%252Ff31efd9f159d7c%26relation%3Dparent.parent&amp;container_width=43&amp;href=http%3A%2F%2Ffacebook.com%2Fhtmlstream&amp;layout=button&amp;locale=en_US&amp;mobile_iframe=true&amp;sdk=joey&amp;size=large" style="border: none; visibility: visible; width: 73px; height: 28px;" class=""></iframe></span></div>
+          </div>
+          <!-- End Facebook Share -->
+
+          <!-- Google Plus -->
+          <div class="mr-3 mb-2 mb-md-0">
+            <div class="g-plus" data-action="share" data-annotation="bubble" data-height="52"></div>
+          </div>
+
+          <div class="mr-3">
+            <iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" style="position: static; visibility: visible; width: 76px; height: 28px;" title="Twitter Tweet Button" src="https://platform.twitter.com/widgets/tweet_button.e3a0e1b01ae601b6c9cf798a93ab7e69.en.html#dnt=false&amp;hashtags=StreamUIKit%2C%20Bootstrap%2C%20Freebies&amp;id=twitter-widget-1&amp;lang=en&amp;original_referer=https%3A%2F%2Fhtmlstream.com%2Fpreview%2Fstream-ui-kit%2F&amp;related=htmlstream%2C%20freebies%2C%20bootstrap&amp;size=l&amp;text=Stream%20UI%20Kit%20is%20beautiful%20Open%20Source%20Bootstrap%204%20UI%20Kit%20under%20MIT%20license.&amp;time=1571556784456&amp;type=share&amp;url=https%3A%2F%2Fhtmlstream.com%2Fpreview%2Fstream-ui-kit%2F"></iframe>
+          </div>
+          <!-- End Tweet -->
+        </div>
+      </div>
+      <!-- End Social Sharing -->
+
+      <hr class="u-opacity-1 mb-4">
+    </div>
+
+    <div class="row px-md-3">
+      <div class="col-md-8 text-center text-md-left mb-3 mb-md-0">
+        <small class="text-white">© 2018 <a class="text-white" href="https://htmlstream.com">Nikita Permyakov</a>. Все права защищены.</small>
+      </div>
+
+      <div class="col-md-4 align-self-center">
+        <ul class="list-inline text-center text-md-right mb-0">
+          <li class="list-inline-item mx-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Facebook">
+            <a class="text-white" target="_blank" href="https://www.facebook.com/htmlstream">
+              <i class="fab fa-facebook"></i>
+            </a>
+          </li>
+          <li class="list-inline-item mx-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Instagram">
+            <a class="text-white" target="_blank" href="https://www.instagram.com/htmlstream">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </li>
+          <li class="list-inline-item mx-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Twitter">
+            <a class="text-white" target="_blank" href="https://twitter.com/htmlstream">
+              <i class="fab fa-twitter"></i>
+            </a>
+          </li>
+          <li class="list-inline-item mx-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Dribbble">
+            <a class="text-white" target="_blank" href="https://dribbble.com/htmlstream">
+              <i class="fab fa-dribbble"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+</body>
+</html>
